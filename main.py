@@ -1,19 +1,9 @@
-import threading
 import cv2
 import mediapipe as mp
-import numpy as np
 import pyautogui
-from threading import Thread
-from time import sleep
 
 # Reduce the delay
 pyautogui.PAUSE = 0.01
-
-moves = ['CENTER','CENTER']
-
-def threaded_function(key):
-    pyautogui.press(key)
-
 
 # Initialize camera to default webcam camera
 cam = cv2.VideoCapture(0)
@@ -92,7 +82,6 @@ while True and cam.isOpened():
         left_eye_top_y = int(left_eye_top.y * frame.shape[0])
         cv2.circle(frame, (left_eye_top_x, left_eye_top_y), 5, (0, 0, 255), -1)
 
-
         # Draw the right eye landmark point on the frame
         right_eye_x = int(right_eye.x * frame.shape[1])
         right_eye_y = int(right_eye.y * frame.shape[0])
@@ -115,7 +104,6 @@ while True and cam.isOpened():
         # Draw a line from left_eye landmark to the right_eye landmark
         cv2.line(frame, (right_eye_x, right_eye_y), (left_eye_x, left_eye_y), (255, 255, 0), 1)
 
-
         # Processing the orientations
         # UP DOWN CONTROLS
         # Get left right ear landmark midpoint
@@ -128,7 +116,7 @@ while True and cam.isOpened():
 
         # LEFT RIGHT CONTROLS
         # Compare left_year_y with right_ear_y, if left_year_y is much greater than right_ear_y, go left, else right
-        if left_ear_y > right_ear_y +lr_treshold:
+        if left_ear_y > right_ear_y + lr_treshold:
             lr_control = "RIGHT"
         elif left_ear_y < right_ear_y - lr_treshold:
             lr_control = "LEFT"
@@ -138,9 +126,8 @@ while True and cam.isOpened():
         if abs(left_eye_top.y - left_eye.y) < 0.01:
             action_control = "SPACE"
 
-
         # Control the movement of the kart using pyautogui
-        moves = [lr_control,ud_control]
+        moves = [lr_control, ud_control]
         isKeyDown = False
         for move in moves:
             if move != 'CENTER':
@@ -159,21 +146,18 @@ while True and cam.isOpened():
             pyautogui.sleep(0.1)
             pyautogui.keyUp('SPACE')
 
-
-
-
-
     # Write text on the frame to display the lr_control value
-    cv2.putText(frame, 'LR: '+lr_control, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    cv2.putText(frame, 'LR: ' + lr_control, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     # Write text on the frame to display the ud_control value
-    cv2.putText(frame, 'UD: '+ud_control, (10, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    cv2.putText(frame, 'UD: ' + ud_control, (10, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     # Write text on the frame to display the action_control value
     # cv2.putText(frame, 'AC: '+action_control, (10, 130), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
+    # UNUSED at the moment
     # Get hand from webcam feed using hand_mesh
-    hand = hand_mesh.process(rgb_frame)
+    # hand = hand_mesh.process(rgb_frame)
     # Get hand landmark points from hand
-    hand_landmarks = hand.multi_hand_landmarks
+    # hand_landmarks = hand.multi_hand_landmarks
 
     # Display the webcam feed
     cv2.imshow('SmashVision', frame)
